@@ -1,0 +1,5 @@
+{
+  "name": "Travel Promo Scout",
+  "description": "An intelligent dashboard that aggregates and compares travel promotions from major booking platforms like Traveloka, Trip.com, and Agoda. It highlights critical action items such as specific login times or event dates to maximize savings.",
+  "requestFramePermissions": []
+}
