@@ -1,12 +1,15 @@
 {
   "name": "travel-promo-scout",
+  "homepage": "https://xkid.github.io/Travel-Promo-Scout/",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@google/genai": "^0.1.0",

@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     // Base path './' ensures assets work in subdirectories (like https://user.github.io/repo/)
-    base: './',
+    base: '/Travel-Promo-Scout/',
     define: {
       // safely expose the API_KEY to the client-side code during build
       'process.env.API_KEY': JSON.stringify(env.API_KEY),
