@@ -8,7 +8,8 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     // Base path './' ensures assets work in subdirectories (like https://user.github.io/repo/)
-    base: '/Travel-Promo-Scout/',
+    // AND at the root (like https://app.vercel.app/)
+    base: './',
     define: {
       // safely expose the API_KEY to the client-side code during build
       'process.env.API_KEY': JSON.stringify(env.API_KEY),

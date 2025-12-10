@@ -1,5 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
-import { PromoDataState, PlatformName, ActionType } from "../types";
+import { PromoDataState, PlatformName } from "../types";
 
 // Helper to sanitize JSON string from Markdown code blocks
 const extractJson = (text: string): string => {
@@ -12,8 +11,6 @@ export const fetchPromotions = async (): Promise<PromoDataState> => {
   if (!apiKey) {
     throw new Error("API Key is missing. Please check your environment variables.");
   }
-
-  const ai = new GoogleGenAI({ apiKey });
 
   const platforms = Object.values(PlatformName).join(", ");
   
@@ -49,16 +46,43 @@ export const fetchPromotions = async (): Promise<PromoDataState> => {
   `;
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-pro-preview",
-      contents: prompt,
-      config: {
-        tools: [{ googleSearch: {} }],
-        // Note: responseMimeType is NOT set because we are using googleSearch
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
       },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: prompt }]
+        }],
+        tools: [{
+          googleSearch: {}
+        }]
+      })
     });
 
-    const text = response.text || "";
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMessage = `API Error: ${response.status} ${response.statusText}`;
+      
+      // Check for common permission errors
+      if (response.status === 403) {
+        errorMessage = "API Key restricted or invalid. If using GitHub Pages, ensure 'Website restrictions' in Google Cloud Console allows your URL.";
+      }
+      
+      console.error("Gemini API Error Body:", errorText);
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    const candidate = data.candidates?.[0];
+    
+    // Extract text content
+    const textPart = candidate?.content?.parts?.find((p: any) => p.text);
+    const text = textPart ? textPart.text : "";
+    
     const jsonString = extractJson(text);
     
     let promotions = [];
@@ -69,8 +93,9 @@ export const fetchPromotions = async (): Promise<PromoDataState> => {
       console.log("Raw text:", text);
     }
 
-    // Extract grounding sources
-    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+    // Extract grounding sources from the raw REST response structure
+    // Structure: candidate.groundingMetadata.groundingChunks[].web
+    const groundingChunks = candidate?.groundingMetadata?.groundingChunks || [];
     const sources = groundingChunks
       .map((chunk: any) => chunk.web)
       .filter((web: any) => web && web.uri && web.title)

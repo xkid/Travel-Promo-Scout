@@ -27,15 +27,15 @@
         background: #94a3b8; 
       }
     </style>
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.32.0",
-    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
     "react": "https://aistudiocdn.com/react@^19.2.1",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.32.0",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.559.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
     "vite": "https://aistudiocdn.com/vite@^7.2.7",
     "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.2"
   }
@@ -44,6 +44,21 @@
 </head>
   <body>
     <div id="root"></div>
+    <div id="root-error" style="display:none; padding: 20px; text-align: center; color: #333;">
+      <h2 style="color: #ef4444; margin-bottom: 10px;">Something went wrong loading the app.</h2>
+      <p>If the screen is white, check the console (F12) for errors.</p>
+    </div>
+    <script>
+      // Simple error boundary to help debug white screen issues
+      window.addEventListener('error', function(e) {
+        setTimeout(function() {
+            const root = document.getElementById('root');
+            if (!root || root.childElementCount === 0) {
+               document.getElementById('root-error').style.display = 'block';
+            }
+        }, 1000);
+      });
+    </script>
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>
