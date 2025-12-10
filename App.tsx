@@ -27,9 +27,7 @@ const App: React.FC = () => {
       setData(result);
     } catch (err) {
       console.error(err);
-      // Display the actual error message if available (useful for API Key missing errors)
-      const errorMessage = err instanceof Error ? err.message : "Failed to fetch latest promotions. Please try again or check your connection.";
-      setError(errorMessage);
+      setError("Failed to fetch latest promotions. Please try again or check your connection.");
     } finally {
       setLoading(false);
     }
